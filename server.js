@@ -1,3 +1,4 @@
+'use strict';
 
 const express = require('express');
 const router = express.Router();
@@ -47,10 +48,23 @@ app.post('/shopping-list', jsonParser, (req, res) => {
   res.status(201).json(item);
 });
 
-
 app.get('/recipes', (req, res) => {
   res.json(Recipes.get());
 })
+
+app.post('/recipes', jsonParser, (req, res) => {
+  //how does it know name vs ingredient? 
+  const newRecipe = ['name', 'ingredients'];
+  for (let i=0; i<newRecipe.length; i++) {
+    const field = newRecipe[i];
+    if(!(field in req.body)) {
+      const message = `Missing \`${field}\` in request body`
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  const item = Recipes.creat(req.body.name, req.body.ingredients);
+  rest.status(201).json(item);
+};
 
 app.listen(process.env.PORT || 8080, () => {
   console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
